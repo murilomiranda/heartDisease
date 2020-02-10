@@ -1,0 +1,85 @@
+---
+title: "Heart Disease"
+author: "Murilo Miranda"
+date: "2/6/2020"
+output: 
+  html_document:
+    toc: true # table of content true
+    toc_float: true
+    code_folding: hide
+    toc_depth: 3  # upto three depths of headings (specified by #, ## and ###)
+    theme: united
+    highlight: breezedark  # specifies the syntax highlighting style
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE}
+library(dplyr)
+library(ggplot2)
+library(kableExtra)
+```
+
+## Loading data
+
+Only 14 attributes used:
+
+* **age**: age in years
+* **sex**: 
+  + value 0: female
+  + value 1: male
+* **cp**: chest pain type
+  + value 1: typical angina
+  + value 2: atypical angina
+  + value 3: non-anginal pain
+  + value 4: asymptomatic
+* **trestbps**: resting blood pressure (in mm Hg on admission to the hospital)
+* **chol**: serum cholestoral in mg/dl
+* **fbs**: fasting blood sugar > 120 mg/dl 
+  + value 1: true
+  + value 0: false 
+* **restecg**: resting electrocardiographic results
+  + value 0: normal
+  + value 1: having ST-T wave abnormality (T wave inversions and/or ST elevation or * depression of > 0.05 mV)
+  + value 2: showing probable or definite left ventricular hypertrophy by Estes' criteria
+* **thalach**: maximum heart rate achieved
+* **exang**: exercise induced angina 
+  + value 1: yes
+  + value 0: no
+* **oldpeak**: ST depression induced by exercise relative to rest
+* **slope**: the slope of the peak exercise ST segment
+  + value 1: upsloping
+  + value 2: flat
+  + value 3: downsloping
+* **ca**: number of major vessels (0-3) colored by flourosopy
+* **thal**:
+  + value 3: normal
+  + value 6: fixed defect
+  + value 7: reversable defect
+* **num**: diagnosis of heart disease (angiographic disease status)
+  + value 0: no presence (< 50% diameter narrowing)
+  + value 1-4: presence (> 50% diameter narrowing)
+
+```{r}
+variableNames <- c("age", "sex", "cp", "trestbps", "chol", "fbs", "restecg", "thalach", "exang", "oldpeak", "slope", "ca", "thal", "num")
+
+data <- read.table("https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data", sep = ",", col.names = variableNames, na.strings = "?")
+
+data <- as_tibble(data)
+```
+
+
+# Convert data types
+```{r}
+data <- data %>% mutate(sex = as.factor(sex), cp = as.factor(cp), fbs = as.factor(fbs), restecg = as.factor(restecg), exang = as.factor(exang), slope = as.factor(slope), thal = as.factor(thal))
+
+# first, replace positive num-values to 1,then convert it to factor 
+data <- data %>% mutate(num = replace(num, num > 0, 1)) %>% mutate(num = as.factor(num))
+
+head(data)
+```
+
+
+<br>
